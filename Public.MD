@@ -1,37 +1,42 @@
-Evet, Unity’de oyun mantığı ve event-driven programlamayı destekleyen **başka teknikler** de vardır. İlk mesajlarda bahsettiğimiz Coroutine, Delegate, Event, Action, UnityEvent gibi temel teknikler dışında da **farklı örneklerle uygulanabilecek** bazı teknikler şunlardır:
+Elbette! Unity'de sıkça kullanılan **Coroutines**, **Delegates**, **Events** ve **Actions**; kod akışını daha esnek ve yönetilebilir hale getirmek için kullanılır. Bunları aşağıda hem açıklamaları hem de **basit örnekleriyle** anlatacağım.
 
 ---
 
-## 🔧 1. **Func<T>** – Fonksiyondan değer döndürmek
+## ✅ 1. **Coroutine** – Zamanla işlem yapma
 
-### 🎯 Ne işe yarar?
+### Ne işe yarar?
 
-`Action` sadece işlem yaparken, `Func<T>` değer döndürür. Delegate’in dönüş değerli halidir.
+Coroutine, işlemleri **belirli aralıklarla** veya **zamanla** gerçekleştirmek için kullanılır. `IEnumerator` tipindedir ve `StartCoroutine()` ile çağrılır.
 
-### 📦 Örnek:
+### 🎯 Amaç: Belirli aralıklarla işlem yapmak
 
 ```csharp
 using UnityEngine;
-using System;
+using System.Collections;
 
-public class FuncExample : MonoBehaviour
+public class CoroutineExample : MonoBehaviour
 {
-    Func<int, int, int> addNumbers;
-
     void Start()
     {
-        addNumbers = (a, b) => a + b;
-        int result = addNumbers(3, 5);
-        Debug.Log($"Toplam: {result}");  // Toplam: 8
+        StartCoroutine(PrintMessages());
+    }
+
+    IEnumerator PrintMessages()
+    {
+        Debug.Log("Mesaj 1");
+        yield return new WaitForSeconds(2f);  // 2 saniye bekler
+        Debug.Log("Mesaj 2");
+        yield return new WaitForSeconds(1f);
+        Debug.Log("Mesaj 3");
     }
 }
 ```
 
 ---
 
-## 🔄 2. **Invoke / InvokeRepeating** – Zamanla fonksiyon çağırma (Alternatif Coroutine)
+## ✅ 2. **Invoke / InvokeRepeating** – Zamanla fonksiyon çağırma (Alternatif Coroutine)
 
-### 🎯 Ne işe yarar?
+### Ne işe yarar?
 
 Bir fonksiyonu belirli süre sonra ya da tekrar eden şekilde çağırmak için kullanılır.
 
@@ -64,13 +69,194 @@ public class InvokeExample : MonoBehaviour
 
 ---
 
-## 🧱 3. **Events ile Enum Kullanımı** – Olayları türlere göre ayırmak
+## ✅ 3. **Delegate (Temsilci Fonksiyon)** – Fonksiyonları değişken gibi kullanma
 
-### 🎯 Ne işe yarar?
+### Ne işe yarar?
 
-Farklı türde event’leri tek sistemde yönetmek için kullanılır.
+Delegate, bir veya daha fazla metodu **bir değişken gibi** tutmamıza olanak tanır. Fonksiyonları parametre olarak göndermek gibi düşünebilirsin.
+
+### 🎯 Amaç: Fonksiyonları dinamik olarak atayıp çalıştırmak
+
+```csharp
+using UnityEngine;
+
+public class DelegateExample : MonoBehaviour
+{
+    public delegate void MyDelegate();  // Delegate tanımı
+    MyDelegate myDelegate;
+
+    void Start()
+    {
+        myDelegate = SayHello;
+        myDelegate += SayBye;
+
+        myDelegate();  // İki fonksiyonu da çağırır
+    }
+
+    void SayHello()
+    {
+        Debug.Log("Merhaba!");
+    }
+
+    void SayBye()
+    {
+        Debug.Log("Güle güle!");
+    }
+}
+```
+
+---
+
+## ✅ 4. **Action / Action<T>** – Kısa ve güçlü event temsilcisi
+
+### Ne işe yarar?
+
+`Action`, delegate’in daha basitleştirilmiş ve sistem tarafından sağlanan bir versiyonudur. Parametreli veya parametresiz kullanılabilir.
+
+### 🎯 Amaç: Delegate yerine daha sade bir şekilde fonksiyon tutmak
+
+```csharp
+using UnityEngine;
+using System;
+
+public class ActionExample : MonoBehaviour
+{
+    Action onJump;
+
+    void Start()
+    {
+        onJump += JumpMessage;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            onJump?.Invoke();
+        }
+    }
+
+    void JumpMessage()
+    {
+        Debug.Log("Zıplama gerçekleşti!");
+    }
+}
+```
+
+> `Action<int>` ile parametre de alabilirsin:
+
+```csharp
+Action<int> onDamageTaken = (damage) => Debug.Log($"Hasar alındı: {damage}");
+```
+
+---
+
+## ✅ 5. **Func<T>** – Fonksiyondan değer döndürmek
+
+### Ne işe yarar?
+
+`Action` sadece işlem yaparken, `Func<T>` değer döndürür. Delegate’in dönüş değerli halidir.
 
 ### 📦 Örnek:
+
+```csharp
+using UnityEngine;
+using System;
+
+public class FuncExample : MonoBehaviour
+{
+    Func<int, int, int> addNumbers;
+
+    void Start()
+    {
+        addNumbers = (a, b) => a + b;
+        int result = addNumbers(3, 5);
+        Debug.Log($"Toplam: {result}");  // Toplam: 8
+    }
+}
+```
+
+---
+
+## ✅ 6. **Event** – Olay bildirimi yapma
+
+### Ne işe yarar?
+
+`event`, delegate’in daha **kontrollü bir versiyonudur**. Dışarıdan sadece `+=` ile abone olunabilir. Oyun içinde bir olay gerçekleştiğinde (örnek: oyuncu ölünce), diğer sistemleri haberdar etmek için kullanılır.
+
+### 🎯 Amaç: Bir olay gerçekleştiğinde diğer sınıflara haber vermek
+
+### 📦 Event Yayıncı (Publisher):
+
+```csharp
+using UnityEngine;
+
+public class EventPublisher : MonoBehaviour
+{
+    public delegate void DeathEvent();
+    public static event DeathEvent OnPlayerDeath;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))  // K tuşuna basınca
+        {
+            Debug.Log("Oyuncu öldü.");
+            OnPlayerDeath?.Invoke();  // Olayı tetikle
+        }
+    }
+}
+```
+
+### 📦 Event Dinleyici (Subscriber):
+
+```csharp
+using UnityEngine;
+
+public class EventSubscriber : MonoBehaviour
+{
+    void OnEnable()
+    {
+        EventPublisher.OnPlayerDeath += HandlePlayerDeath;
+    }
+
+    void OnDisable()
+    {
+        EventPublisher.OnPlayerDeath -= HandlePlayerDeath;
+    }
+
+    void HandlePlayerDeath()
+    {
+        Debug.Log("EventSubscriber: Oyuncu öldü haberi alındı.");
+    }
+}
+```
+
+### 📦 Event Dağıtıcı (Deployer): Inline Lambda Expression ile fonksiyon yazmak
+
+```csharp
+using UnityEngine;
+using System;
+
+public class LambdaExample : MonoBehaviour
+{
+    event Action onFire;
+
+    void Start()
+    {
+        onFire += () => Debug.Log("Ateş edildi!");
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            onFire?.Invoke();
+        }
+    }
+}
+```
+
+### 📦 Event Ayırıcı (Collector): Farklı türde event’leri tek sistemde yönetmek için kullanılır.
 
 ```csharp
 public enum GameEventType
@@ -100,44 +286,89 @@ public static class EnumEventManager
 }
 ```
 
-> Bu sayede tek event sistemiyle farklı türde olaylar yönetilebilir.
-
 ---
 
-## 🧪 4. **Lambda Expression ile Olay Dinlemek** – Inline fonksiyon yazmak
+## ✅ 7. **UnityEvent** – Inspector üzerinden event bağlamak
 
-### 🎯 Ne işe yarar?
+### Ne işe yarar?
 
-Event’lere kısa fonksiyonlarla anında abone olmayı sağlar.
+UnityEvent, Unity Inspector’dan fonksiyon bağlamaya yarayan event sistemidir. `UnityEngine.Events` namespace’inde bulunur. Oyun tasarımcısı kod yazmadan event’leri kontrol edebilir.
 
-### 📦 Örnek:
+### 🎯 Amaç: Kod yazmadan Inspector’dan fonksiyon atamak
 
 ```csharp
 using UnityEngine;
-using System;
+using UnityEngine.Events;
 
-public class LambdaExample : MonoBehaviour
+public class UnityEventExample : MonoBehaviour
 {
-    event Action onFire;
-
-    void Start()
-    {
-        onFire += () => Debug.Log("Ateş edildi!");
-    }
+    public UnityEvent onButtonPressed;
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            onFire?.Invoke();
+            onButtonPressed?.Invoke();  // Inspector’dan bağlı fonksiyonlar çalışır
         }
     }
 }
 ```
 
+> Inspector'da `onButtonPressed` alanı görünür ve başka GameObject’lerin fonksiyonları buraya bağlanabilir.
+
 ---
 
-## 📦 5. **Input Event Sistemi ile Bağlantılı Kullanım**
+## ✅ 8. **Kendi EventManager Sınıfını (Custom Event Sistemi) Yazmak** (Opsiyonel)
+
+###  Ne işe yarar?
+
+Basit oyunlar için kendi Event sistemini yazmak işine yarayabilir. Bu sistemde `Dictionary<string, Action>` gibi yapılarla olay isimleri üzerinden işlemler yapılır.
+
+### 🎯 Amaç: Genel olay yönetimi yapmak
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+public static class EventManager
+{
+    private static Dictionary<string, Action> events = new();
+
+    public static void Subscribe(string eventName, Action listener)
+    {
+        if (!events.ContainsKey(eventName))
+            events[eventName] = listener;
+        else
+            events[eventName] += listener;
+    }
+
+    public static void Unsubscribe(string eventName, Action listener)
+    {
+        if (events.ContainsKey(eventName))
+            events[eventName] -= listener;
+    }
+
+    public static void Publish(string eventName)
+    {
+        if (events.ContainsKey(eventName))
+            events[eventName]?.Invoke();
+    }
+}
+```
+
+### 📦 Kullanım:
+
+```csharp
+// Abone ol
+EventManager.Subscribe("GameOver", OnGameOver);
+
+// Event tetikle
+EventManager.Publish("GameOver");
+```
+
+---
+
+## ✅ 9. **Input Event Sistemi ile Bağlantılı Kullanım**
 
 Unity’nin **Yeni Input System** kullanılıyorsa, event-driven kontrol için `performed`, `started`, `canceled` gibi olaylar dinlenebilir.
 
@@ -181,6 +412,17 @@ public class InputExample : MonoBehaviour
 
 ---
 
-İstersen bu tekniklerin birkaçıyla oluşturulmuş **küçük senaryo** da hazırlayabilirim (örneğin: "Fareye tıklanınca skor artar, skor değeri başka bir sınıfa iletilir" gibi).
+## 🔚 Özet (Tek Cümlelik Tanımlar)
 
-Devam etmek ister misin?
+| Teknik       | Ne İşe Yarar?                                      |
+| ------------ | -------------------------------------------------- |
+| Coroutine    | Zamanla işlemleri yürütmek                         |
+| Delegate     | Fonksiyonları değişken gibi kullanmak              |
+| Event        | Olay tetiklendiğinde ilgili fonksiyonları çağırmak |
+| Action       | Delegate’in kısa ve modern versiyonu               |
+| UnityEvent   | Inspector’dan fonksiyon bağlamayı sağlamak         |
+| EventManager | Kendi genel olay sistemini oluşturmak              |
+
+---
+
+İstersen bu yapıları içeren **mini bir sistem örneği** (mesela: “oyuncu can kaybedince UI güncelle”) oluşturabiliriz. Uygulamalı öğrenmek istersen haber ver!
