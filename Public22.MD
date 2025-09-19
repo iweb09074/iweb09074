@@ -1,4 +1,4 @@
-Anladım! Yalnızca Unity’de **oyun mantığı** ve **event-driven programlama** için kullanılan **kodlama tekniklerine** ve **örneklerine** odaklanalım. Aşağıda bu bağlamda en sık kullanılan teknikleri sade ve net örneklerle veriyorum:
+Harika bir yaklaşım! Unity’de **oyun mantığı** ve **event-driven programlama** üzerine odaklanmak, daha **modüler**, **okunabilir** ve **bakımı kolay** kodlar yazmanı sağlar. İlk mesajda verdiğim `Coroutine`, `Delegate`, `Event` ve `Action` konuları bu amaca hizmet eden temel tekniklerdi.
 
 ---
 
@@ -55,7 +55,42 @@ public class DelegateExample : MonoBehaviour
 
 ---
 
-## ✅ 3. **Event** – Olay bildirimi yapma
+## ✅ 3. **Action / Action<T>** – Kısa ve güçlü event temsilcisi
+
+### 🎯 Amaç: Delegate yerine daha sade bir şekilde fonksiyon tutmak
+
+```csharp
+using UnityEngine;
+using System;
+
+public class ActionExample : MonoBehaviour
+{
+    Action onJump;
+
+    void Start()
+    {
+        onJump += () => Debug.Log("Zıplama gerçekleşti!");
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            onJump?.Invoke();
+        }
+    }
+}
+```
+
+> `Action<int>` ile parametre de alabilirsin:
+
+```csharp
+Action<int> onDamageTaken = (damage) => Debug.Log($"Hasar alındı: {damage}");
+```
+
+---
+
+## ✅ 4. **Event** – Olay bildirimi yapma
 
 ### 🎯 Amaç: Bir olay gerçekleştiğinde diğer sınıflara haber vermek
 
@@ -106,42 +141,11 @@ public class UIManager : MonoBehaviour
 
 ---
 
-## ✅ 4. **Action / Action<T>** – Kısa ve güçlü event temsilcisi
-
-### 🎯 Amaç: Delegate yerine daha sade bir şekilde fonksiyon tutmak
-
-```csharp
-using UnityEngine;
-using System;
-
-public class ActionExample : MonoBehaviour
-{
-    Action onJump;
-
-    void Start()
-    {
-        onJump += () => Debug.Log("Zıplama gerçekleşti!");
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            onJump?.Invoke();
-        }
-    }
-}
-```
-
-> `Action<int>` ile parametre de alabilirsin:
-
-```csharp
-Action<int> onDamageTaken = (damage) => Debug.Log($"Hasar alındı: {damage}");
-```
-
----
-
 ## ✅ 5. **UnityEvent** – Inspector üzerinden event bağlamak
+
+### Ne işe yarar?
+
+UnityEvent, Unity Inspector’dan fonksiyon bağlamaya yarayan event sistemidir. `UnityEngine.Events` namespace’inde bulunur. Oyun tasarımcısı kod yazmadan event’leri kontrol edebilir.
 
 ### 🎯 Amaç: Kod yazmadan Inspector’dan fonksiyon atamak
 
@@ -151,23 +155,27 @@ using UnityEngine.Events;
 
 public class UnityEventExample : MonoBehaviour
 {
-    public UnityEvent onPressed;
+    public UnityEvent onButtonPressed;
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            onPressed?.Invoke();  // Inspector’dan bağlı fonksiyonlar çalışır
+            onButtonPressed?.Invoke();  // Inspector’dan bağlı fonksiyonlar çalışır
         }
     }
 }
 ```
 
-> Inspector’dan istediğin GameObject’teki fonksiyonları bu event'e atayabilirsin.
+> Inspector'da `onButtonPressed` alanı görünür ve başka GameObject’lerin fonksiyonları buraya bağlanabilir.
 
 ---
 
-## ✅ 6. **Kendi EventManager'ını Yazmak** (Opsiyonel)
+## ✅ 6. **Kendi EventManager Sınıfını (Custom Event Sistemi) Yazmak** (Opsiyonel)
+
+###  Ne işe yarar?
+
+Basit oyunlar için kendi Event sistemini yazmak işine yarayabilir. Bu sistemde `Dictionary<string, Action>` gibi yapılarla olay isimleri üzerinden işlemler yapılır.
 
 ### 🎯 Amaç: Genel olay yönetimi yapmak
 
@@ -209,8 +217,6 @@ EventManager.Subscribe("GameOver", OnGameOver);
 
 // Event tetikle
 EventManager.Publish("GameOver");
-
-void OnGameOver() => Debug.Log("Oyun bitti!");
 ```
 
 ---
