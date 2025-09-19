@@ -400,29 +400,4 @@ public class InputExample : MonoBehaviour
 
 ---
 
-## 🔚 SONUÇ – Ekstra Teknikler Tablosu
 
-| Teknik / Yapı                | Açıklama                      |
-| ---------------------------- | ----------------------------- |
-| **Func<T>**                  | Değer döndüren delegate       |
-| **Invoke / InvokeRepeating** | Coroutine alternatifleri      |
-| **Enum ile Event Sistemi**   | Event'leri gruplandırmak      |
-| **Lambda ile Event Dinleme** | Anlık/inline event tanımlama  |
-| **Yeni Input System Events** | Girişleri event olarak işleme |
-
----
-
-## 🔚 Özet (Tek Cümlelik Tanımlar)
-
-| Teknik       | Ne İşe Yarar?                                      |
-| ------------ | -------------------------------------------------- |
-| Coroutine    | Zamanla işlemleri yürütmek                         |
-| Delegate     | Fonksiyonları değişken gibi kullanmak              |
-| Event        | Olay tetiklendiğinde ilgili fonksiyonları çağırmak |
-| Action       | Delegate’in kısa ve modern versiyonu               |
-| UnityEvent   | Inspector’dan fonksiyon bağlamayı sağlamak         |
-| EventManager | Kendi genel olay sistemini oluşturmak              |
-
----
-
-İstersen bu yapıları içeren **mini bir sistem örneği** (mesela: “oyuncu can kaybedince UI güncelle”) oluşturabiliriz. Uygulamalı öğrenmek istersen haber ver!
