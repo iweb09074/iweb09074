@@ -1,8 +1,12 @@
-Harika bir yaklaşım! Unity’de **oyun mantığı** ve **event-driven programlama** üzerine odaklanmak, daha **modüler**, **okunabilir** ve **bakımı kolay** kodlar yazmanı sağlar. İlk mesajda verdiğim `Coroutine`, `Delegate`, `Event` ve `Action` konuları bu amaca hizmet eden temel tekniklerdi.
+Elbette! Unity'de sıkça kullanılan **Coroutines**, **Delegates**, **Events** ve **Actions**; kod akışını daha esnek ve yönetilebilir hale getirmek için kullanılır. Bunları aşağıda hem açıklamaları hem de **basit örnekleriyle** anlatacağım.
 
 ---
 
 ## ✅ 1. **Coroutine** – Zamanla işlem yapma
+
+### Ne işe yarar?
+
+Coroutine, işlemleri **belirli aralıklarla** veya **zamanla** gerçekleştirmek için kullanılır. `IEnumerator` tipindedir ve `StartCoroutine()` ile çağrılır.
 
 ### 🎯 Amaç: Belirli aralıklarla işlem yapmak
 
@@ -14,21 +18,27 @@ public class CoroutineExample : MonoBehaviour
 {
     void Start()
     {
-        StartCoroutine(WaitAndPrint());
+        StartCoroutine(PrintMessages());
     }
 
-    IEnumerator WaitAndPrint()
+    IEnumerator PrintMessages()
     {
-        Debug.Log("Başladı");
-        yield return new WaitForSeconds(2f);  // 2 saniye bekle
-        Debug.Log("2 saniye sonra");
+        Debug.Log("Mesaj 1");
+        yield return new WaitForSeconds(2f);  // 2 saniye bekler
+        Debug.Log("Mesaj 2");
+        yield return new WaitForSeconds(1f);
+        Debug.Log("Mesaj 3");
     }
 }
 ```
 
 ---
 
-## ✅ 2. **Delegate** – Fonksiyonları değişken gibi kullanma
+## ✅ 2. **Delegate (Temsilci Fonksiyon)** – Fonksiyonları değişken gibi kullanma
+
+### Ne işe yarar?
+
+Delegate, bir veya daha fazla metodu **bir değişken gibi** tutmamıza olanak tanır. Fonksiyonları parametre olarak göndermek gibi düşünebilirsin.
 
 ### 🎯 Amaç: Fonksiyonları dinamik olarak atayıp çalıştırmak
 
@@ -42,20 +52,31 @@ public class DelegateExample : MonoBehaviour
 
     void Start()
     {
-        myDelegate = Hello;
-        myDelegate += Bye;
+        myDelegate = SayHello;
+        myDelegate += SayBye;
 
-        myDelegate();  // İkisini de çalıştırır
+        myDelegate();  // İki fonksiyonu da çağırır
     }
 
-    void Hello() => Debug.Log("Merhaba!");
-    void Bye() => Debug.Log("Görüşürüz!");
+    void SayHello()
+    {
+        Debug.Log("Merhaba!");
+    }
+
+    void SayBye()
+    {
+        Debug.Log("Güle güle!");
+    }
 }
 ```
 
 ---
 
 ## ✅ 3. **Action / Action<T>** – Kısa ve güçlü event temsilcisi
+
+### Ne işe yarar?
+
+`Action`, delegate’in daha basitleştirilmiş ve sistem tarafından sağlanan bir versiyonudur. Parametreli veya parametresiz kullanılabilir.
 
 ### 🎯 Amaç: Delegate yerine daha sade bir şekilde fonksiyon tutmak
 
@@ -69,7 +90,7 @@ public class ActionExample : MonoBehaviour
 
     void Start()
     {
-        onJump += () => Debug.Log("Zıplama gerçekleşti!");
+        onJump += JumpMessage;
     }
 
     void Update()
@@ -78,6 +99,11 @@ public class ActionExample : MonoBehaviour
         {
             onJump?.Invoke();
         }
+    }
+
+    void JumpMessage()
+    {
+        Debug.Log("Zıplama gerçekleşti!");
     }
 }
 ```
@@ -92,6 +118,10 @@ Action<int> onDamageTaken = (damage) => Debug.Log($"Hasar alındı: {damage}");
 
 ## ✅ 4. **Event** – Olay bildirimi yapma
 
+### Ne işe yarar?
+
+`event`, delegate’in daha **kontrollü bir versiyonudur**. Dışarıdan sadece `+=` ile abone olunabilir. Oyun içinde bir olay gerçekleştiğinde (örnek: oyuncu ölünce), diğer sistemleri haberdar etmek için kullanılır.
+
 ### 🎯 Amaç: Bir olay gerçekleştiğinde diğer sınıflara haber vermek
 
 ### 📦 Event Yayıncı (Publisher):
@@ -99,17 +129,17 @@ Action<int> onDamageTaken = (damage) => Debug.Log($"Hasar alındı: {damage}");
 ```csharp
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class EventPublisher : MonoBehaviour
 {
-    public delegate void OnDeathHandler();
-    public static event OnDeathHandler OnDeath;
+    public delegate void DeathEvent();
+    public static event DeathEvent OnPlayerDeath;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K))  // K tuşuna basınca
         {
             Debug.Log("Oyuncu öldü.");
-            OnDeath?.Invoke();  // Olayı tetikle
+            OnPlayerDeath?.Invoke();  // Olayı tetikle
         }
     }
 }
@@ -120,21 +150,21 @@ public class Player : MonoBehaviour
 ```csharp
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
+public class EventSubscriber : MonoBehaviour
 {
     void OnEnable()
     {
-        Player.OnDeath += ShowGameOver;
+        EventPublisher.OnPlayerDeath += HandlePlayerDeath;
     }
 
     void OnDisable()
     {
-        Player.OnDeath -= ShowGameOver;
+        EventPublisher.OnPlayerDeath -= HandlePlayerDeath;
     }
 
-    void ShowGameOver()
+    void HandlePlayerDeath()
     {
-        Debug.Log("Game Over UI gösteriliyor.");
+        Debug.Log("EventSubscriber: Oyuncu öldü haberi alındı.");
     }
 }
 ```
