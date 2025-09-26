@@ -449,3 +449,131 @@ public class InputExample : MonoBehaviour
 
 
 
+## 🚫 `Instantiate` ve `Destroy` Yöntemi
+
+Sık sık `Instantiate` ve `Destroy` kullanıldığında **performans düşer** çünkü her defasında heap’te yeni nesne açılır ve Garbage Collector çalışmak zorunda kalır.
+
+### Örnek: Puzzle parçalarını sürekli üretip yok etmek
+
+```csharp
+public class BadSpawner : MonoBehaviour
+{
+    public GameObject prefab;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            // Her bastığında yeni obje oluştur
+            GameObject obj = Instantiate(prefab, Random.insideUnitSphere * 5, Quaternion.identity);
+
+            // 2 saniye sonra yok et
+            Destroy(obj, 2f);
+        }
+    }
+}
+```
+
+👉 Bu durumda:
+
+* Space’e basıldıkça **hep yeni prefab oluşturulur**.
+* Destroy edilen objeler **çöpe atılır** → Garbage Collector daha sık devreye girer.
+* Mobil cihazlarda **frame drop (takılma)** görülür.
+
+---
+
+## ✅ Object Pooling ile (İyi Yöntem)
+
+Senin örneğin gibi, bir defa üretilen objeler tekrar kullanılır:
+
+---
+
+## 📂 Object Pooling Yapısı (Örnek)
+
+**Amaç:** Sık sık `Instantiate` / `Destroy` yerine havuz kullanarak **GC (Garbage Collector) yükünü azaltmak**.
+
+```csharp
+public class ObjectPool : MonoBehaviour
+{
+    public GameObject prefab;
+    public int poolSize = 10;
+    private Queue<GameObject> pool = new Queue<GameObject>();
+
+    void Start()
+    {
+        for (int i = 0; i < poolSize; i++)
+        {
+            GameObject obj = Instantiate(prefab);
+            obj.SetActive(false);
+            pool.Enqueue(obj);
+        }
+    }
+
+    public GameObject GetFromPool(Vector3 pos)
+    {
+        if (pool.Count > 0)
+        {
+            GameObject obj = pool.Dequeue();
+            obj.transform.position = pos;
+            obj.SetActive(true);
+            return obj;
+        }
+        return null;
+    }
+
+    public void ReturnToPool(GameObject obj)
+    {
+        obj.SetActive(false);
+        pool.Enqueue(obj);
+    }
+}
+```
+
+---
+
+🔹 **Örnek:** Puzzle parçaları, mermiler, düşman spawn sistemi.
+
+```csharp
+public class GoodSpawner : MonoBehaviour
+{
+    public ObjectPool pool;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            // Havuzdan hazır obje al
+            GameObject obj = pool.GetFromPool(Random.insideUnitSphere * 5);
+
+            // 2 saniye sonra geri gönder
+            StartCoroutine(ReturnAfterDelay(obj, 2f));
+        }
+    }
+
+    IEnumerator ReturnAfterDelay(GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        pool.ReturnToPool(obj);
+    }
+}
+```
+
+👉 Burada **Instantiate/Destroy yerine SetActive(true/false)** yapıldığı için:
+
+* Çöp oluşmaz, GC uğraşmaz.
+* Performans mobil cihazlarda **çok daha akıcı** olur.
+
+👉 `Instantiate` yerine:
+
+```csharp
+var piece = pool.GetFromPool(new Vector3(0,0,0));
+pool.ReturnToPool(piece);
+```
+
+---
+
+| Taktik            | Açıklama                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------- |
+| `Object Pooling`  | Puzzle parçaları yeniden kullanılacaksa Instantiate/Destroy yerine Object Pool kullan |
+
+---
