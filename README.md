@@ -102,38 +102,27 @@ public class InvokeExample : MonoBehaviour
 
 ---
 
-## ✅ 3. **Delegate (Temsilci Fonksiyon)** – Fonksiyonları değişken gibi kullanma
+## ✅ 3. **Func<T>** – Fonksiyondan değer döndürmek
 
 ### Ne işe yarar?
 
-Delegate, bir veya daha fazla metodu **bir değişken gibi** tutmamıza olanak tanır. Fonksiyonları parametre olarak göndermek gibi düşünebilirsin.
+`Action` sadece işlem yaparken, `Func<T>` değer döndürür. Delegate’in dönüş değerli halidir.
 
-### 🎯 Amaç: Fonksiyonları dinamik olarak atayıp çalıştırmak
+### 📦 Örnek:
 
 ```csharp
 using UnityEngine;
+using System;
 
-public class DelegateExample : MonoBehaviour
+public class FuncExample : MonoBehaviour
 {
-    public delegate void MyDelegate();  // Delegate tanımı
-    MyDelegate myDelegate;
+    Func<int, int, int> addNumbers;
 
     void Start()
     {
-        myDelegate = SayHello;
-        myDelegate += SayBye;
-
-        myDelegate();  // İki fonksiyonu da çağırır
-    }
-
-    void SayHello()
-    {
-        Debug.Log("Merhaba!");
-    }
-
-    void SayBye()
-    {
-        Debug.Log("Güle güle!");
+        addNumbers = (a, b) => a + b;
+        int result = addNumbers(3, 5);
+        Debug.Log($"Toplam: {result}");  // Toplam: 8
     }
 }
 ```
@@ -184,27 +173,38 @@ Action<int> onDamageTaken = (damage) => Debug.Log($"Hasar alındı: {damage}");
 
 ---
 
-## ✅ 5. **Func<T>** – Fonksiyondan değer döndürmek
+## ✅ 5. **Delegate (Temsilci Fonksiyon)** – Fonksiyonları değişken gibi kullanma
 
 ### Ne işe yarar?
 
-`Action` sadece işlem yaparken, `Func<T>` değer döndürür. Delegate’in dönüş değerli halidir.
+Delegate, bir veya daha fazla metodu **bir değişken gibi** tutmamıza olanak tanır. Fonksiyonları parametre olarak göndermek gibi düşünebilirsin.
 
-### 📦 Örnek:
+### 🎯 Amaç: Fonksiyonları dinamik olarak atayıp çalıştırmak
 
 ```csharp
 using UnityEngine;
-using System;
 
-public class FuncExample : MonoBehaviour
+public class DelegateExample : MonoBehaviour
 {
-    Func<int, int, int> addNumbers;
+    public delegate void MyDelegate();  // Delegate tanımı
+    MyDelegate myDelegate;
 
     void Start()
     {
-        addNumbers = (a, b) => a + b;
-        int result = addNumbers(3, 5);
-        Debug.Log($"Toplam: {result}");  // Toplam: 8
+        myDelegate = SayHello;
+        myDelegate += SayBye;
+
+        myDelegate();  // İki fonksiyonu da çağırır
+    }
+
+    void SayHello()
+    {
+        Debug.Log("Merhaba!");
+    }
+
+    void SayBye()
+    {
+        Debug.Log("Güle güle!");
     }
 }
 ```
