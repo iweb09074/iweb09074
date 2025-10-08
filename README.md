@@ -11,27 +11,6 @@ Hi 👋, I'm Unity blogger from Turkey
 </div>
 
 
-### Özet (Tek Cümlelik Tanımlar):
-
-| Koşul           | Açıklama                               | Kullanımı             |
-| --------------- | -------------------------------------- | --------------------- |
-| Coroutine       | Zamanla işlemleri yürütmek             |                       |
-| Invoke / InvokeRepeating | Coroutine alternatifleri      |                       |
-| Delegate        | Fonksiyonları değişken gibi kullanmak  |                       |
-| Action          | Delegate’in kısa ve modern versiyonu   |                       |
-| Func<T>         | Değer döndüren delegate                |                       |
-| Event           | Olay tetiklendiğinde ilgili fonksiyonları çağırmak |           |
-| Lambda ile Event Dinleme | Anlık/inline event tanımlama  |                       |
-| Enum ile Event Sistemi | Event'leri gruplandırmak        |                       |
-| UnityEvent      | Inspector’dan fonksiyon bağlamayı sağlamak |                   |
-| EventManager    | Kendi genel olay sistemini oluşturmak  |                       |
-| Input System Events | Girişleri event olarak işleme      |                       |
-
-
-
-### Özet
-
-Unity'de sıkça kullanılan **Coroutines**, **Delegates**, **Events** ve **Actions**; kod akışını daha esnek ve yönetilebilir hale getirmek için kullanılır. 
 
 ---
 
