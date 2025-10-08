@@ -442,37 +442,7 @@ public static class EnumEventManager
 
 ---
 
-## ✅ 7. **UnityEvent** – Inspector üzerinden event bağlamak
-
-### Ne işe yarar?
-
-UnityEvent, Unity Inspector’dan fonksiyon bağlamaya yarayan event sistemidir. `UnityEngine.Events` namespace’inde bulunur. Oyun tasarımcısı kod yazmadan event’leri kontrol edebilir.
-
-### 🎯 Amaç: Kod yazmadan Inspector’dan fonksiyon atamak
-
-```csharp
-using UnityEngine;
-using UnityEngine.Events;
-
-public class UnityEventExample : MonoBehaviour
-{
-    public UnityEvent onButtonPressed;
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            onButtonPressed?.Invoke();  // Inspector’dan bağlı fonksiyonlar çalışır
-        }
-    }
-}
-```
-
-> Inspector'da `onButtonPressed` alanı görünür ve başka GameObject’lerin fonksiyonları buraya bağlanabilir.
-
----
-
-## ✅ 8. **Kendi EventManager Sınıfını (Custom Event Sistemi) Yazmak** (Opsiyonel)
+## ✅ 7. **Kendi EventManager Sınıfını (Custom Event Sistemi) Yazmak** (Opsiyonel)
 
 ###  Ne işe yarar?
 
@@ -519,6 +489,36 @@ EventManager.Subscribe("GameOver", OnGameOver);
 // Event tetikle
 EventManager.Publish("GameOver");
 ```
+
+---
+
+## ✅ 8. **UnityEvent** – Inspector üzerinden event bağlamak
+
+### Ne işe yarar?
+
+UnityEvent, Unity Inspector’dan fonksiyon bağlamaya yarayan event sistemidir. `UnityEngine.Events` namespace’inde bulunur. Oyun tasarımcısı kod yazmadan event’leri kontrol edebilir.
+
+### 🎯 Amaç: Kod yazmadan Inspector’dan fonksiyon atamak
+
+```csharp
+using UnityEngine;
+using UnityEngine.Events;
+
+public class UnityEventExample : MonoBehaviour
+{
+    public UnityEvent onButtonPressed;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            onButtonPressed?.Invoke();  // Inspector’dan bağlı fonksiyonlar çalışır
+        }
+    }
+}
+```
+
+> Inspector'da `onButtonPressed` alanı görünür ve başka GameObject’lerin fonksiyonları buraya bağlanabilir.
 
 ---
 
