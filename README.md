@@ -22,9 +22,9 @@ Hi 👋, I'm Unity blogger from Turkey
 
 For `OnTriggerEnter` to work:
 
-✅ Both objects must have Collider
-✅ At least one of them must have a Rigidbody
-✅ In colliders with triggers, `Is Trigger` must be enabled
+- ✅ Both objects must have Collider
+- ✅ At least one of them must have a Rigidbody
+- ✅ In colliders with triggers, `Is Trigger` must be enabled
 
 ---
 
