@@ -11,7 +11,7 @@ Hi 👋, I'm Unity blogger from Turkey
 ---
 
 <div align="center">
-  <img height="150" src="assets/img/patterns.jpg"  />
+  <img height="300" src="assets/img/patterns.jpg"  />
 </div>
 
 ---
