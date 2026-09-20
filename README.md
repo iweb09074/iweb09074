@@ -32,7 +32,7 @@ For `OnTriggerEnter` to work:
 
 ### Player
 
-* Rigidbody
+* Rigidbody / uygun fizik bileşeni
 * Collider
 * Tag = Player
 
