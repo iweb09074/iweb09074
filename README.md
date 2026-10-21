@@ -51,7 +51,6 @@ For `OnTriggerEnter` to work:
 * Collider
 * Is Trigger ✔
 * EndTrigger Script
-* Tag = Obstacle
 
 ### GameManager
 
