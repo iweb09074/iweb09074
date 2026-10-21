@@ -57,13 +57,3 @@ For `OnTriggerEnter` to work:
 * GameOverUI assigned
 * CompleteLevelUI assigned
 
----
-
-## Test
-
-Press Play:
-
-* Once the player enters the trigger area:
-
-  * `CompleteLevelUI` should open
-  * Type `build index` in the console
