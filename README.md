@@ -42,7 +42,7 @@ For `OnTriggerEnter` to work:
 ### PlayerCollision
 
 * Collider
-* Is Trigger ✔
+* Is Trigger ❌
 * PlayerCollision Script
 * Tag = Obstacle
 
