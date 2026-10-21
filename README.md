@@ -22,8 +22,8 @@ Hi 👋, I'm Unity blogger from Turkey
 
 For `OnTriggerEnter` to work:
 
+- ✅ One object must have a Rigidbody
 - ✅ Both objects must have Collider
-- ✅ At least one of them must have a Rigidbody
 - ✅ In colliders with triggers, `Is Trigger` must be enabled
 
 ---
@@ -33,17 +33,27 @@ For `OnTriggerEnter` to work:
 ### Player
 
 * Rigidbody / uygun fizik bileşeni
+  * `Use Gravity`: Kapalı
 * Collider
 * Tag = Player
+
+### PlayerCollision
+
+* Collider
+* Is Trigger ✔
+* PlayerCollision Script
+* Tag = Obstacle
 
 ### EndTrigger
 
 * Collider
 * Is Trigger ✔
 * EndTrigger Script
+* Tag = Obstacle
 
 ### GameManager
 
+* GameOverUI assigned
 * CompleteLevelUI assigned
 
 ---
