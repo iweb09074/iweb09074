@@ -16,39 +16,28 @@ Hi 👋, I'm Unity blogger from Turkey
 
 ---
 
-# Correct collider/trigger settings in the Unity scene
-
-## 1. The Most Important Unity Physics Rule
-
-For `OnTriggerEnter` to work:
-
-- ✅ One object must have a Rigidbody
-- ✅ Both objects must have Collider
-- ✅ In colliders with triggers, `Is Trigger` must be enabled
-
----
-
-## Last Working Structure
+## Working Structure
 
 ### Player
 
-* Rigidbody / uygun fizik bileşeni
+* Rigidbody / uygun fizik bileşeni (One object must have a Rigidbody)
   * `Use Gravity`: Kapalı
   * `Constraints`: Freeze Position: Y
   * `Constraints`: Freeze Rotation: X ve Z
-* Collider
+* Collider (Both objects must have Collider)
+* PlayerCollision Script
+* Is Trigger ❌
 * Tag = Player
 
-### PlayerCollision
+### Enemy
 
 * Collider
 * Is Trigger ❌
-* PlayerCollision Script
 * Tag = Obstacle
 
 ### EndTrigger
 
-* Collider
+* Collider (Both objects must have Collider)
 * Is Trigger ✔
 * EndTrigger Script
 
