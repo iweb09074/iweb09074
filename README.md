@@ -35,7 +35,7 @@ For `OnTriggerEnter` to work:
 * Rigidbody / uygun fizik bileşeni
   * `Use Gravity`: Kapalı
   * `Constraints`: Freeze Position: Y
-  * `Constraints`: Freeze Rotation: Z
+  * `Constraints`: Freeze Rotation: X ve Z
 * Collider
 * Tag = Player
 
